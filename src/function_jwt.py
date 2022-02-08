@@ -19,7 +19,6 @@ def write_token(data: dict):
         token = token.encode("UTF-8")
     else:
         token = token.decode("UTF-8")
-
     return token
 
 #funcion para validar token
@@ -28,7 +27,6 @@ def validate_token(token, output=False):
         if output:
             return decode(token, key=getenv("SECRET"), algorithms=["HS256"])
         decode(token, key=getenv("SECRET"), algorithms=["HS256"])
-    #si no se recibe un token, se da la excepcion
     except exceptions.DecodeError:
         response = jsonify({"message": "Invalid Token"})
         response.status_code = 401
