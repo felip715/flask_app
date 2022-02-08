@@ -7,23 +7,17 @@ from function_jwt import write_token, validate_token
 from conex_postgresql import conect_bbdd
 
 
-app = Flask(__name__)  # este archivo es el principal de la aplicacion
+app = Flask(__name__)
 
 
 @app.route('/listar', methods=['GET'])
 def listar():
     try:
-        # conectar a la base de datos
         connection = conect_bbdd()
-        # utilizar cursor
         cursor = connection.cursor()
-        # crear la consulta
         sql = 'SELECT * FROM users'
-        # ejecutar la consulta
         cursor.execute(sql)
-        # mostrar resultados
         registro = cursor.fetchall()
-        # TODO: Cerrar conexion si o si. El error salta porque abris la conexion en la configuracion. Hace una funcion para conectarte y llama esa funcion cada vez que la necesites. En config.py si crea variables con los datos que necesitas para conectarte.
         cursor.close()
         connection.close()
         datos = []
@@ -46,7 +40,6 @@ def leer(dni):
         sql = "SELECT * FROM users WHERE dni = '{0}'".format(dni)
         cursor.execute(sql)
         registro = cursor.fetchone()
-        # TODO: Cerrar conexion
         cursor.close()
         connection.close()
         if registro != None:
@@ -66,7 +59,6 @@ def leer(dni):
 def registrar_datos():
     if request.json != None:
         try:
-            # TODO: SI no envias nada en la request se rompe, hace control de errores antes de generar la query.
             connection = conect_bbdd()
             cursor = connection.cursor()
             sql = """INSERT INTO users (dni, name, surname, sex, born, phone, address, email, pass) VALUES 
@@ -77,11 +69,9 @@ def registrar_datos():
             val_mail = validar_mail("'{0}'".format(request.json['email']))
             if val_mail:
                 cursor.execute(sql)
-                connection.commit()  # confirma la accion de insercion
-                # TODO: Cerra la conexión.
+                connection.commit()
                 cursor.close()
                 connection.close()
-                # TODO: Retornar algo más significatico, ej: {'status': 200, 'token': write_token(data=request.get_json()), 'message': 'Registro exitoso'}
                 return {'status' : 200, 'token' : write_token(data=request.get_json()), 'message': 'Register Successful'}
             else:
                 return jsonify({"message": "Incorrect email format"})
@@ -103,7 +93,6 @@ def login():
     try:
         email = data['email']
     except Exception as e:
-        # TODO: Controlar errores.
         print("the following data is missing")
         print(e)
         return jsonify({"message": "You must enter an Email"})
@@ -111,7 +100,6 @@ def login():
     try:
         pass_user = data['pass']
     except Exception as e:
-        # TODO: Controlar errores.
         print("the following data is missing")
         print(e)
         return jsonify({"message": "You must insert a password"})
