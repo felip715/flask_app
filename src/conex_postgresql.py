@@ -1,6 +1,4 @@
-from ast import Str
 from multiprocessing import connection
-from typing import Type
 import psycopg2
 
 def conect_bbdd():
